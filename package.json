@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "http-server": "^13.0.2",
+    "jquery": "^3.6.0",
+    "jsdom": "^17.0.0",
+    "node-fetch": "^3.0.0"
+  },
+  "type": "module"
+}

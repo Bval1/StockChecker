@@ -1,0 +1,1 @@
+To install all modules: npm install
