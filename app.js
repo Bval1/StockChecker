@@ -19,7 +19,7 @@ const data2 = await response2.text();
 
 const dom = new JSDOM(data);
 const dom2 = new JSDOM(data2);
-//const music = new Audio('air_horn.wav');
+
 /*
 var gpu = dom.window.document.querySelector(".sku-item-list .shop-sku-list-item .sku-title h4 a")
 var price = dom.window.document.querySelector(".sku-item-list .shop-sku-list-item .priceView-hero-price.priceView-customer-price").firstChild
@@ -69,8 +69,17 @@ const sorted2 = gpuList2.slice().sort((a, b) => b.textContent.length - a.textCon
 var maxStrLength2 = sorted2[0].textContent.length
 var maxStrLength = maxStrLength > maxStrLength2 ? maxStrLength : maxStrLength2;
 
-const inStock = "[IN STOCK]";
-const outOfStock = "[OUT OF STOCK]";
+//const platform = navigator.userAgent;
+//if (platform.includes("Win"))
+
+const inStock = "\x1b[32m [IN STOCK] \x1b[0m";
+const outOfStock = "\x1b[31m [OUT OF STOCK] \x1b[0m"
+
+
+// 
+//const inStock = "[IN STOCK]";
+// const outOfStock = "[OUT OF STOCK]";
+// 
 
 console.log("--------------------RTX 3070-----------------------")
 for (let i = 0; i < gpuList.length; i++)
@@ -81,7 +90,7 @@ for (let i = 0; i < gpuList.length; i++)
     if (!(stockList[i].disabled))
         console.log(`${name} ${price} ${inStock.padStart((maxStrLength - nameLen) + inStock.length)}`);
     else
-        console.warn(`${name} ${price} ${outOfStock.padStart((maxStrLength - nameLen) + outOfStock.length)}`);
+        console.log(`${name} ${price} ${outOfStock.padStart((maxStrLength - nameLen) + outOfStock.length)}`);
 }
 
 console.log("\n--------------------RTX 3060TI-----------------------")
@@ -93,5 +102,5 @@ for (let i = 0; i < gpuList2.length; i++)
     if (!(stockList2[i].disabled))
         console.log(`${name} ${price} ${inStock.padStart((maxStrLength - nameLen) + inStock.length)}`);
     else
-        console.warn(`${name} ${price} ${outOfStock.padStart((maxStrLength - nameLen) + outOfStock.length)}`);
+        console.log(`${name} ${price} ${outOfStock.padStart((maxStrLength - nameLen) + outOfStock.length)}`);
 }
