@@ -1,7 +1,7 @@
 import fetch from 'node-fetch'
 import jsdom from 'jsdom'
 
-async function CheckStock()
+while (true)
 {
     const { JSDOM } = jsdom;
     const url = 
@@ -18,6 +18,7 @@ async function CheckStock()
     const data = await response.text();
     const response2 = await fetch(url2);
     const data2 = await response2.text();
+
     const dom = new JSDOM(data);
     const dom2 = new JSDOM(data2);
 
@@ -57,12 +58,8 @@ async function CheckStock()
     var maxStrLength2 = sorted2[0].textContent.length
     var maxStrLength = maxStrLength > maxStrLength2 ? maxStrLength : maxStrLength2;
 
-    //const platform = navigator.userAgent;
-    //if (platform.includes("Win"))
     const inStock = "\x1b[32m [IN STOCK] \x1b[0m";
     const outOfStock = "\x1b[31m [OUT OF STOCK] \x1b[0m"
-    //const inStock = "[IN STOCK]";
-    // const outOfStock = "[OUT OF STOCK]";
 
     console.log("--------------------RTX 3070-----------------------")
     for (let i = 0; i < gpuList.length; i++)
@@ -88,5 +85,3 @@ async function CheckStock()
             console.log(`${name} ${price} ${outOfStock.padStart((maxStrLength - nameLen) + outOfStock.length)}`);
     }
 }
-
-CheckStock();
