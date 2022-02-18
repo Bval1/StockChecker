@@ -1,5 +1,5 @@
 @echo off
-Set _Height=9000
-Set _Width=51
+:loop
 call node app.js
+goto loop
 PAUSE
