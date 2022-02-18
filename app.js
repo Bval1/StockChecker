@@ -8,12 +8,12 @@ async function CheckStock()
         'https://www.bestbuy.com/site/searchpage.jsp?id=pcat17071&qp=gpusv_facet%3DGraphics%20Processing%20Unit%20(GPU)~NVIDIA%20GeForce%20RTX%203070&sp=%2Bcurrentprice%20skuidsaas&st=rtx+3070';
 
     const url2 = 
-        'https://www.bestbuy.com/site/searchpage.jsp?id=pcat17071&sp=%2Bcurrentprice%20skuidsaas&st=rtx+3060+ti'
+        'https://www.bestbuy.com/site/searchpage.jsp?id=pcat17071&sp=%2Bcurrentprice%20skuidsaas&st=rtx+3060+ti';
 
 
     var t = 0
 
-    console.log("Refreshing...");
+    console.log("\nRefreshing...");
     const response = await fetch(url);
     const data = await response.text();
     const response2 = await fetch(url2);
@@ -57,13 +57,9 @@ async function CheckStock()
     var maxStrLength2 = sorted2[0].textContent.length
     var maxStrLength = maxStrLength > maxStrLength2 ? maxStrLength : maxStrLength2;
 
-    //const platform = navigator.userAgent;
-    //if (platform.includes("Win"))
     const inStock = "\x1b[32m [IN STOCK] \x1b[0m";
     const outOfStock = "\x1b[31m [OUT OF STOCK] \x1b[0m"
-    //const inStock = "[IN STOCK]";
-    // const outOfStock = "[OUT OF STOCK]";
-
+    
     console.log("--------------------RTX 3070-----------------------")
     for (let i = 0; i < gpuList.length; i++)
     {
