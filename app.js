@@ -26,19 +26,9 @@ async function SendEmail(message)
     console.log("Preview URL: %s", getTestMessageUrl(info));
 }
 
-async function CheckStock()
+async function CheckStock(url, url2)
 {
     const { JSDOM } = jsdom;
-    const url = 
-        'https://www.bestbuy.com/site/searchpage.jsp?id=pcat17071&qp=gpusv_facet%3DGraphics%20Processing%20Unit%20(GPU)~NVIDIA%20GeForce%20RTX%203070&sp=%2Bcurrentprice%20skuidsaas&st=rtx+3070';
-
-    // const url = 
-    // 'https://www.bestbuy.com/site/searchpage.jsp?id=pcat17071&st=rtx+3090&ref=212&loc=1&gclid=Cj0KCQiApL2QBhC8ARIsAGMm-KFfVbgZqaxCgbehoEwvHhlksxnHxBN20wATcBH2HSq_rzPmzCDlug0aAodREALw_wcB&gclsrc=aw.ds';
-    
-    const url2 = 
-        'https://www.bestbuy.com/site/searchpage.jsp?id=pcat17071&sp=%2Bcurrentprice%20skuidsaas&st=rtx+3060+ti';
-
-
     var t = 0
 
     console.log("\nRefreshing...");
@@ -98,7 +88,7 @@ async function CheckStock()
         if (!(stockList[i].disabled))
         {
             console.log(`${name} ${price} ${inStock.padStart((maxStrLength - nameLen) + inStock.length)}`);
-            SendEmail(`${name} ${price}`);
+            SendEmail(`${name} ${price}`).catch(console.error);
         }
         else
             console.log(`${name} ${price} ${outOfStock.padStart((maxStrLength - nameLen) + outOfStock.length)}`);
@@ -113,11 +103,19 @@ async function CheckStock()
         if (!(stockList2[i].disabled))
         {
             console.log(`${name} ${price} ${inStock.padStart((maxStrLength - nameLen) + inStock.length)}`);
-            SendEmail(`${name} ${price}`);    
+            SendEmail(`${name} ${price}`).catch(console.error);    
         }
         else
             console.log(`${name} ${price} ${outOfStock.padStart((maxStrLength - nameLen) + outOfStock.length)}`);
     }
 }
 
-CheckStock();
+  const rtx3070 = 
+        'https://www.bestbuy.com/site/searchpage.jsp?id=pcat17071&qp=gpusv_facet%3DGraphics%20Processing%20Unit%20(GPU)~NVIDIA%20GeForce%20RTX%203070&sp=%2Bcurrentprice%20skuidsaas&st=rtx+3070';
+
+    const rtx3090 = 
+    'https://www.bestbuy.com/site/searchpage.jsp?id=pcat17071&st=rtx+3090&ref=212&loc=1&gclid=Cj0KCQiApL2QBhC8ARIsAGMm-KFfVbgZqaxCgbehoEwvHhlksxnHxBN20wATcBH2HSq_rzPmzCDlug0aAodREALw_wcB&gclsrc=aw.ds';
+    
+    const rtx3060ti = 
+        'https://www.bestbuy.com/site/searchpage.jsp?id=pcat17071&sp=%2Bcurrentprice%20skuidsaas&st=rtx+3060+ti';
+CheckStock(rtx3070, rtx3060ti).catch(console.error);
