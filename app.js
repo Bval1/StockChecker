@@ -1,5 +1,30 @@
 import fetch from 'node-fetch'
 import jsdom from 'jsdom'
+import { createTestAccount, createTransport, getTestMessageUrl } from "nodemailer";
+
+async function SendEmail(message)
+{
+
+    let transporter = createTransport({
+        service: "gmail",
+        auth : {
+            user: 'fbar5298@gmail.com',
+            pass: 'Testing123!'
+        },
+    });
+
+    let info = await transporter.sendMail({
+        from: 'fbar5298@gmail.com',
+        to: "bryanv312@hotmail.com",
+        subject: 'Stock alert',
+        text: message,
+        //html: "<b>Hello world</b>",
+    });
+
+    console.log("Message sent: %s", info.messageId);
+
+    console.log("Preview URL: %s", getTestMessageUrl(info));
+}
 
 async function CheckStock()
 {
@@ -7,6 +32,9 @@ async function CheckStock()
     const url = 
         'https://www.bestbuy.com/site/searchpage.jsp?id=pcat17071&qp=gpusv_facet%3DGraphics%20Processing%20Unit%20(GPU)~NVIDIA%20GeForce%20RTX%203070&sp=%2Bcurrentprice%20skuidsaas&st=rtx+3070';
 
+    // const url = 
+    // 'https://www.bestbuy.com/site/searchpage.jsp?id=pcat17071&st=rtx+3090&ref=212&loc=1&gclid=Cj0KCQiApL2QBhC8ARIsAGMm-KFfVbgZqaxCgbehoEwvHhlksxnHxBN20wATcBH2HSq_rzPmzCDlug0aAodREALw_wcB&gclsrc=aw.ds';
+    
     const url2 = 
         'https://www.bestbuy.com/site/searchpage.jsp?id=pcat17071&sp=%2Bcurrentprice%20skuidsaas&st=rtx+3060+ti';
 
@@ -63,11 +91,15 @@ async function CheckStock()
     console.log("--------------------RTX 3070-----------------------")
     for (let i = 0; i < gpuList.length; i++)
     {
+        let url = gpuList[i].parentElement.innerHTML;
         let name = gpuList[i].textContent;
         let price = priceList[i].firstChild.innerHTML;
         let nameLen = name.length;
         if (!(stockList[i].disabled))
+        {
             console.log(`${name} ${price} ${inStock.padStart((maxStrLength - nameLen) + inStock.length)}`);
+            SendEmail(`${name} ${price}`);
+        }
         else
             console.log(`${name} ${price} ${outOfStock.padStart((maxStrLength - nameLen) + outOfStock.length)}`);
     }
@@ -79,7 +111,10 @@ async function CheckStock()
         let price = priceList2[i].firstChild.innerHTML;
         let nameLen = name.length;
         if (!(stockList2[i].disabled))
+        {
             console.log(`${name} ${price} ${inStock.padStart((maxStrLength - nameLen) + inStock.length)}`);
+            SendEmail(`${name} ${price}`);    
+        }
         else
             console.log(`${name} ${price} ${outOfStock.padStart((maxStrLength - nameLen) + outOfStock.length)}`);
     }
