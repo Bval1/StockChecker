@@ -1,7 +1,7 @@
 import fetch from 'node-fetch'
 import jsdom from 'jsdom'
 import { createTestAccount, createTransport, getTestMessageUrl } from "nodemailer";
-
+import AbortController from 'abort-controller'; 
 async function SendEmail(message)
 {
 
@@ -27,14 +27,23 @@ async function SendEmail(message)
 
 async function CheckStock(url, url2)
 {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
     const { JSDOM } = jsdom;
     var t = 0
 
     console.log("\nRefreshing...");
-    const response = await fetch(url);
+    
+    const response = await fetch(url, { signal: controller.signal }).catch(function(e) {
+        console.log(`Error: Refresh took too long.\nURL: ${url}\n${e.message}`)
+    });
     const data = await response.text();
-    const response2 = await fetch(url2);
+   
+    const response2 = await fetch(url2, { signal: controller.signal }).catch(function(e) {
+        console.log(`Error: Refresh took too long.\nURL: ${url2}\n${e.message}`)
+    });
     const data2 = await response2.text();
+    
     const dom = new JSDOM(data);
     const dom2 = new JSDOM(data2);
 
