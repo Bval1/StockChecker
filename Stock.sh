@@ -1,7 +1,4 @@
 #!/bin/bash
 echo "Checking stock..."
-while :
-do
-    node --no-warnings app.js
-done
+node --no-warnings app.js
 echo "Done"
