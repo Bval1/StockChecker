@@ -25,16 +25,17 @@ async function SendEmail(message)
     console.log("Preview URL: %s", getTestMessageUrl(info));
 }
 
-async function GetData(url1, url2)
+async function CheckStock(url, url2)
 {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000);
     const { JSDOM } = jsdom;
     var t = 0
 
-     
-    const response = await fetch(url1, { signal: controller.signal }).catch(function(e) {
-        console.log(`Error: Refresh took too long.\nURL: ${url1}\n${e.message}`)
+    console.log("\nRefreshing...");
+    
+    const response = await fetch(url, { signal: controller.signal }).catch(function(e) {
+        console.log(`Error: Refresh took too long.\nURL: ${url}\n${e.message}`)
     });
     const data = await response.text();
    
@@ -43,11 +44,9 @@ async function GetData(url1, url2)
     });
     const data2 = await response2.text();
     
-    let dom = new JSDOM(data), dom2 = new JSDOM(data2);
-    return {'item1' : dom, 'item2' : dom2};
-}
-async function CheckStock(dom, dom2)
-{
+    const dom = new JSDOM(data);
+    const dom2 = new JSDOM(data2);
+
     const gpuList = Array.from(
         dom.window.document.querySelectorAll(".sku-item-list .shop-sku-list-item .sku-title h4 a")
     );
@@ -134,12 +133,4 @@ const rtx3060ti =
 const rtx3090 = 
     'https://www.bestbuy.com/site/searchpage.jsp?id=pcat17071&st=rtx+3090&ref=212&loc=1&gclid=Cj0KCQiApL2QBhC8ARIsAGMm-KFfVbgZqaxCgbehoEwvHhlksxnHxBN20wATcBH2HSq_rzPmzCDlug0aAodREALw_wcB&gclsrc=aw.ds';
 
-
-while (true)
-{
-    const doms = GetData(rtx3070, rtx3060ti);
-    const dom =  (await doms).item1;
-    const dom2 = (await doms).item2;
-    CheckStock(dom, dom2).catch(console.error);
-    console.log("\nRefreshing...");
-}
+CheckStock(rtx3070, rtx3060ti).catch(console.error);
