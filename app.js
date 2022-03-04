@@ -30,7 +30,7 @@ async function GetData(url1, url2)
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000);
     const { JSDOM } = jsdom;
-    var t = 0
+    var t = 0;
 
      
     const response = await fetch(url1, { signal: controller.signal }).catch(function(e) {
