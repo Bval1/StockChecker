@@ -46,6 +46,7 @@ async function GetData(url1, url2)
     let dom = new JSDOM(data), dom2 = new JSDOM(data2);
     return {'item1' : dom, 'item2' : dom2};
 }
+
 async function CheckStock(dom, dom2)
 {
     const gpuList = Array.from(
@@ -87,8 +88,10 @@ async function CheckStock(dom, dom2)
     const inStock = "\x1b[32m [IN STOCK] \x1b[0m";
     const outOfStock = "\x1b[31m [OUT OF STOCK] \x1b[0m"
     const parentURL = "https://www.bestbuy.com"
+    let list1 = [];
+    let list2 = [];
 
-    console.log("--------------------RTX 3070-----------------------")
+    
     for (let i = 0; i < gpuList.length; i++)
     {
         let childURL = parentURL + gpuList[i].parentElement.innerHTML;
@@ -99,14 +102,18 @@ async function CheckStock(dom, dom2)
         let nameLen = name.length;
         if (!(stockList[i].disabled))
         {
-            console.log(`${name} ${price} ${inStock.padStart((maxStrLength - nameLen) + inStock.length)}`);
+            list1.push(`${name} ${price} ${inStock.padStart((maxStrLength - nameLen) + inStock.length)}`);
+            //console.log(`${name} ${price} ${inStock.padStart((maxStrLength - nameLen) + inStock.length)}`);
             SendEmail(`${name} ${price} - ${fullURL}`).catch(console.error);
         }
         else
-            console.log(`${name} ${price} ${outOfStock.padStart((maxStrLength - nameLen) + outOfStock.length)}`);
+        {
+            list1.push(`${name} ${price} ${outOfStock.padStart((maxStrLength - nameLen) + outOfStock.length)}`);
+            //console.log(`${name} ${price} ${outOfStock.padStart((maxStrLength - nameLen) + outOfStock.length)}`);
+        }
     }
     
-    console.log("\n--------------------RTX 3060TI-----------------------")
+    
     for (let i = 0; i < gpuList2.length; i++)
     {
         let childURL = parentURL + gpuList2[i].parentElement.innerHTML;
@@ -117,12 +124,18 @@ async function CheckStock(dom, dom2)
         let nameLen = name.length;
         if (!(stockList2[i].disabled))
         {
-            console.log(`${name} ${price} ${inStock.padStart((maxStrLength - nameLen) + inStock.length)}`);
+            list2.push(`${name} ${price} ${inStock.padStart((maxStrLength - nameLen) + inStock.length)}`);
+            //console.log(`${name} ${price} ${inStock.padStart((maxStrLength - nameLen) + inStock.length)}`);
             SendEmail(`${name} ${price} - ${fullURL}`).catch(console.error);    
         }
         else
-            console.log(`${name} ${price} ${outOfStock.padStart((maxStrLength - nameLen) + outOfStock.length)}`);
+        {
+            list2.push(`${name} ${price} ${outOfStock.padStart((maxStrLength - nameLen) + outOfStock.length)}`);
+            //console.log(`${name} ${price} ${outOfStock.padStart((maxStrLength - nameLen) + outOfStock.length)}`);
+        }
     }
+
+    return [list1, list2]
 }
 
 const rtx3070 = 
@@ -135,11 +148,27 @@ const rtx3090 =
     'https://www.bestbuy.com/site/searchpage.jsp?id=pcat17071&st=rtx+3090&ref=212&loc=1&gclid=Cj0KCQiApL2QBhC8ARIsAGMm-KFfVbgZqaxCgbehoEwvHhlksxnHxBN20wATcBH2HSq_rzPmzCDlug0aAodREALw_wcB&gclsrc=aw.ds';
 
 
-while (true)
-{
-    const doms = GetData(rtx3070, rtx3060ti);
-    const dom =  (await doms).item1;
-    const dom2 = (await doms).item2;
-    CheckStock(dom, dom2).catch(console.error);
-    console.log("\nRefreshing...");
-}
+// while (true)
+// {
+//     const doms = GetData(rtx3070, rtx3060ti);
+//     const dom =  (await doms).item1;
+//     const dom2 = (await doms).item2;
+//     CheckStock(dom, dom2).catch(console.error);
+//     console.log("\nRefreshing...");
+// }
+
+const doms = GetData(rtx3070, rtx3060ti);
+const dom =  (await doms).item1;
+const dom2 = (await doms).item2;
+let result = await CheckStock(dom, dom2).catch(console.error);
+
+console.log("--------------------RTX 3070-----------------------")
+result[0].forEach(element => {
+    console.log(element)
+});
+console.log("\n--------------------RTX 3060TI-----------------------")
+result[1].forEach(element => {
+    console.log(element)
+});
+
+ console.log("\nRefreshing...");
