@@ -2,6 +2,9 @@ import fetch from 'node-fetch'
 import jsdom from 'jsdom'
 import { createTestAccount, createTransport, getTestMessageUrl } from "nodemailer";
 import AbortController from 'abort-controller'; 
+
+let sendAlert = 1;
+
 async function SendEmail(message)
 {
 
@@ -90,7 +93,7 @@ async function CheckStock(dom, dom2)
     const parentURL = "https://www.bestbuy.com"
     let list1 = [];
     let list2 = [];
-
+    let messages = [];
     
     for (let i = 0; i < gpuList.length; i++)
     {
@@ -104,7 +107,7 @@ async function CheckStock(dom, dom2)
         {
             list1.push(`${name} ${price} ${inStock.padStart((maxStrLength - nameLen) + inStock.length)}`);
             //console.log(`${name} ${price} ${inStock.padStart((maxStrLength - nameLen) + inStock.length)}`);
-            SendEmail(`${name} ${price} - ${fullURL}`).catch(console.error);
+            messages.push(`${name} ${price} - ${fullURL}`);
         }
         else
         {
@@ -126,13 +129,21 @@ async function CheckStock(dom, dom2)
         {
             list2.push(`${name} ${price} ${inStock.padStart((maxStrLength - nameLen) + inStock.length)}`);
             //console.log(`${name} ${price} ${inStock.padStart((maxStrLength - nameLen) + inStock.length)}`);
-            SendEmail(`${name} ${price} - ${fullURL}`).catch(console.error);    
+            messages.push(`${name} ${price} - ${fullURL}`);
         }
         else
         {
             list2.push(`${name} ${price} ${outOfStock.padStart((maxStrLength - nameLen) + outOfStock.length)}`);
             //console.log(`${name} ${price} ${outOfStock.padStart((maxStrLength - nameLen) + outOfStock.length)}`);
         }
+    }
+
+    if (sendAlert)
+    {
+        messages.forEach(element => {
+            SendEmail(element).catch(console.error); 
+        });
+        sendAlert = 0;
     }
 
     return [list1, list2]
@@ -147,28 +158,21 @@ const rtx3060ti =
 const rtx3090 = 
     'https://www.bestbuy.com/site/searchpage.jsp?id=pcat17071&st=rtx+3090&ref=212&loc=1&gclid=Cj0KCQiApL2QBhC8ARIsAGMm-KFfVbgZqaxCgbehoEwvHhlksxnHxBN20wATcBH2HSq_rzPmzCDlug0aAodREALw_wcB&gclsrc=aw.ds';
 
-
-// while (true)
-// {
-//     const doms = GetData(rtx3070, rtx3060ti);
-//     const dom =  (await doms).item1;
-//     const dom2 = (await doms).item2;
-//     CheckStock(dom, dom2).catch(console.error);
-//     console.log("\nRefreshing...");
-// }
-
-const doms = GetData(rtx3070, rtx3060ti);
-const dom =  (await doms).item1;
-const dom2 = (await doms).item2;
-let result = await CheckStock(dom, dom2).catch(console.error);
-
-console.log("--------------------RTX 3070-----------------------")
-result[0].forEach(element => {
-    console.log(element)
-});
-console.log("\n--------------------RTX 3060TI-----------------------")
-result[1].forEach(element => {
-    console.log(element)
-});
-
- console.log("\nRefreshing...");
+while (1)
+{
+    const doms = GetData(rtx3070, rtx3060ti);
+    const dom =  (await doms).item1;
+    const dom2 = (await doms).item2;
+    let result = await CheckStock(dom, dom2).catch(console.error);
+    
+    console.log("--------------------RTX 3070-----------------------")
+    result[0].forEach(element => {
+        console.log(element)
+    });
+    console.log("\n--------------------RTX 3060TI-----------------------")
+    result[1].forEach(element => {
+        console.log(element)
+    });
+    
+     console.log("\nRefreshing...");
+}
